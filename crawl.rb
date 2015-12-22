@@ -10,15 +10,13 @@
 ultra_small_line, small_line, medium_line, big_line = '', '', '', ''
 
 def command(font, string)
-  %x( tput setaf 3; figlet -c -w $(tput cols) -f fonts/#{font}.flf '#{string}' )
+  %x( tput setaf 3; figlet -c -w $(tput cols) -f #{font} '#{string}' )
 end
 
-def centered_position(string)
+def center
   lines = `tput lines`.to_i
-  center_y = lines <= 20 ? 0 : ((lines / 2) - 10)
-  center_x = (`tput cols`.to_i / 2) - (string.length / 2)
-  center_x = center_x > 0 ? center_x : 0
-  "#{center_y} #{center_x}"
+  center = lines <= 30 ? 0 : ((lines / 2) - 15)
+  "#{center} 0"
 end
 
 puts `printf "\e[?25l"`
@@ -27,11 +25,18 @@ ARGF.read.each_line do |current_line|
   ultra_small_line, small_line, medium_line, big_line = small_line, medium_line, big_line, current_line
 
   puts `clear`
-  puts %x( tput setaf 3; tput cup #{centered_position(ultra_small_line)}; echo '#{ultra_small_line}' )
-  puts command('cybersmall', small_line)
-  puts command('small', medium_line)
-  puts command('big', big_line)
-  sleep(0.5)
+  puts `tput cup #{center}`
+  puts command('cybersmall', ultra_small_line)
+  puts "\n"
+  puts "\n"
+  puts command('cybermedium', small_line)
+  puts "\n"
+  puts "\n"
+  puts command('cyberlarge', medium_line)
+  puts "\n"
+  puts "\n"
+  puts command('doom', big_line)
+  sleep(1)
 end
 
 puts `printf "\e[?25h"`
