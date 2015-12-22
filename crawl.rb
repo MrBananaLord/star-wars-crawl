@@ -14,8 +14,11 @@ def command(font, string)
 end
 
 def centered_position(string)
-  center = (`tput cols`.to_i / 2) - (string.length / 2)
-  center > 0 ? center : 0
+  lines = `tput lines`.to_i
+  center_y = lines <= 20 ? 0 : ((lines / 2) - 10)
+  center_x = (`tput cols`.to_i / 2) - (string.length / 2)
+  center_x = center_x > 0 ? center_x : 0
+  "#{center_y} #{center_x}"
 end
 
 puts `printf "\e[?25l"`
@@ -24,7 +27,7 @@ ARGF.read.each_line do |current_line|
   ultra_small_line, small_line, medium_line, big_line = small_line, medium_line, big_line, current_line
 
   puts `clear`
-  puts %x( tput setaf 3; tput cup 0 #{centered_position(ultra_small_line)}; echo '#{ultra_small_line}' )
+  puts %x( tput setaf 3; tput cup #{centered_position(ultra_small_line)}; echo '#{ultra_small_line}' )
   puts command('cybersmall', small_line)
   puts command('small', medium_line)
   puts command('big', big_line)
